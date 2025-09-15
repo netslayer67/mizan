@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* 🌞 Neutral / Background */
+        --background: 210 40% 98%;
+        /* very light blueish-white (cerah tapi nggak #fff) */
+        --foreground: 220 30% 15%;
+        /* navy tua, readable */
+        --card: 0 0% 100%;
+        /* putih bersih untuk card */
+        --card-foreground: 220 30% 15%;
+        /* teks navy */
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 220 30% 15%;
+        --border: 220 20% 85%;
+        /* soft gray */
+        --input: 220 20% 85%;
+        --ring: 199 95% 48%;
+        /* biru cerah highlight */
+
+        /* 🎨 Brand Core */
+        --primary: 199 95% 48%;
+        /* biru cerah (#00AEEF) */
+        --primary-foreground: 0 0% 100%;
+        --secondary: 231 44% 20%;
+        /* navy tua (#1B1E56) */
+        --secondary-foreground: 0 0% 100%;
+        --accent: 200 100% 65%;
+        /* biru muda soft */
+        --accent-foreground: 0 0% 100%;
+
+        /* 🛡️ Functional */
+        --success: 152 55% 45%;
+        /* emerald hijau */
+        --success-foreground: 0 0% 100%;
+        --warning: 38 92% 55%;
+        /* amber */
+        --warning-foreground: 30 20% 10%;
+        --error: 355 75% 50%;
+        /* merah */
+        --error-foreground: 0 0% 100%;
+        --info: 200 85% 60%;
+        /* ice blue */
+        --info-foreground: 0 0% 100%;
+
+        /* ✨ Extras */
+        --muted: 210 20% 95%;
+        /* abu cerah */
+        --muted-foreground: 220 10% 40%;
+        --overlay: 210 40% 98% / 0.7;
+
+        /* Gradients */
+        --gradient-primary: linear-gradient(135deg, hsl(199 95% 48%), hsl(231 44% 20%));
+        --gradient-accent: linear-gradient(135deg, hsl(200 100% 65%), transparent);
+
+        --radius: 0.75rem;
+        --text-subtle: 220 10% 45%;
+        --text-secondary: 220 20% 35%;
+    }
+
+}
+
+/* hero text readability tweak */
+.drop-shadow {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.drop-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.animated-gradient {
+    background-image: var(--gradient-primary);
+    background-size: 200% 200%;
+    animation: gradientShift 12s linear infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: 'Bebas Neue', sans-serif;
+        letter-spacing: 0.02em;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        translate: no;
+    }
+}
+
+@layer components {
+    .glass-card {
+        @apply bg-card/60 backdrop-blur-md border border-border rounded-2xl;
+    }
+
+    .btn-primary {
+        background: var(--gradient-primary);
+        color: hsl(var(--primary-foreground));
+    }
+
+    .btn-accent {
+        background: var(--gradient-accent);
+        color: hsl(var(--accent-foreground));
+    }
+}
+
+.text-outline {
+    -webkit-text-stroke: 1px hsl(var(--foreground));
+    color: transparent;
+}
+
+/* scrollbar styling */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+::-webkit-scrollbar-track {
+    background: #00000000;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #5e5e5e;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #5e5e5e00;
+}
