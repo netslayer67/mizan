@@ -11,8 +11,10 @@ import {
     Building2,
     Newspaper,
     Phone,
+    Moon,
+    Sun,
 } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage, useTheme } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import {
     Select,
@@ -28,27 +30,32 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
     const { t, currentLanguage, changeLanguage } = useLanguage();
+    const { isDarkMode, toggleTheme } = useTheme();
 
     const navigation = useMemo(() => [
-        { name: t("home"), href: "/", icon: <Home className="w-4 h-4 mr-2" /> },
-        { name: t("about"), href: "/about", icon: <Info className="w-4 h-4 mr-2" /> },
-        { name: t("programs"), href: "/programs", icon: <Book className="w-4 h-4 mr-2" /> },
-        { name: t("asrama"), href: "/asrama", icon: <Building2 className="w-4 h-4 mr-2" /> },
-        { name: t("publications"), href: "/publications", icon: <Book className="w-4 h-4 mr-2" /> },
-        { name: t("news"), href: "/news", icon: <Newspaper className="w-4 h-4 mr-2" /> },
-        { name: t("contact"), href: "/contact", icon: <Phone className="w-4 h-4 mr-2" /> },
+        { name: t("home"), href: "/", icon: <Home className="w-4 h-4 mr-2" />, ariaLabel: "Navigate to home page" },
+        { name: t("about"), href: "/about", icon: <Info className="w-4 h-4 mr-2" />, ariaLabel: "Navigate to about page" },
+        { name: t("programs"), href: "/programs", icon: <Book className="w-4 h-4 mr-2" />, ariaLabel: "Navigate to programs page" },
+        { name: t("asrama"), href: "/asrama", icon: <Building2 className="w-4 h-4 mr-2" />, ariaLabel: "Navigate to asrama page" },
+        { name: t("publications"), href: "/publications", icon: <Book className="w-4 h-4 mr-2" />, ariaLabel: "Navigate to publications page" },
+        { name: t("news"), href: "/news", icon: <Newspaper className="w-4 h-4 mr-2" />, ariaLabel: "Navigate to news page" },
+        { name: t("contact"), href: "/contact", icon: <Phone className="w-4 h-4 mr-2" />, ariaLabel: "Navigate to contact page" },
     ], [t]);
 
     const languages = useMemo(() => [
-        { code: "id", countryCode: "ID" },
-        { code: "en", countryCode: "US" },
-        { code: "ar", countryCode: "SA" },
+        { code: "id", countryCode: "ID", label: "Bahasa Indonesia" },
+        { code: "en", countryCode: "US", label: "English" },
+        { code: "ar", countryCode: "SA", label: "العربية" },
     ], []);
 
     return (
-        <nav className="sticky top-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/40 ring-1 ring-white/20 transition-all duration-[320ms]">
+        <nav
+            className="sticky top-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/40 ring-1 ring-white/20 transition-all duration-[320ms]"
+            role="navigation"
+            aria-label="Main navigation"
+        >
             {/* Decorative animated blobs */}
-            <div className="absolute inset-0 -z-10 overflow-hidden">
+            <div className="absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
                 <motion.div
                     className="absolute w-72 h-72 rounded-full bg-accent/20 blur-3xl"
                     animate={{ x: [0, 60, -40, 0], y: [0, 40, -30, 0] }}
@@ -64,16 +71,16 @@ const Navbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center">
+                    <Link to="/" className="flex items-center" aria-label="Rumah Yatim Mizan home">
                         <img
                             src={logo}
-                            alt="Rumah Yatim Mizan"
+                            alt="Rumah Yatim Mizan logo"
                             className="h-10 w-auto transition-transform duration-[320ms] hover:scale-110 hover:drop-shadow-lg"
                         />
                     </Link>
 
                     {/* Desktop nav */}
-                    <div className="hidden md:flex items-center space-x-8">
+                    <div className="hidden md:flex items-center space-x-8" role="menubar">
                         {navigation.map((item) => {
                             const isActive = location.pathname === item.href;
                             return (
@@ -84,12 +91,16 @@ const Navbar = () => {
                                         ? "text-primary bg-accent/10"
                                         : "text-foreground hover:text-primary hover:bg-accent/5"
                                         }`}
+                                    role="menuitem"
+                                    aria-current={isActive ? "page" : undefined}
+                                    aria-label={item.ariaLabel}
                                 >
                                     {item.name}
                                     {isActive && (
                                         <motion.span
                                             layoutId="navbar-underline"
                                             className="absolute left-0 -bottom-1 w-full h-[2px] bg-primary rounded-full"
+                                            aria-hidden="true"
                                         />
                                     )}
                                 </Link>
@@ -97,10 +108,27 @@ const Navbar = () => {
                         })}
                     </div>
 
-                    {/* Language selector + donate */}
-                    <div className="hidden md:flex items-center space-x-4">
+                    {/* Theme toggle + Language selector + donate */}
+                    <div className="hidden md:flex items-center space-x-3">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={toggleTheme}
+                            className="w-9 h-9 p-0 bg-card/40 border border-border rounded-lg backdrop-blur-md transition-all duration-[320ms] hover:bg-accent/20"
+                            aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                        >
+                            {isDarkMode ? (
+                                <Sun className="w-4 h-4" aria-hidden="true" />
+                            ) : (
+                                <Moon className="w-4 h-4" aria-hidden="true" />
+                            )}
+                        </Button>
+
                         <Select value={currentLanguage} onValueChange={changeLanguage}>
-                            <SelectTrigger className="w-[60px] bg-card/40 border border-border rounded-lg justify-center backdrop-blur-md transition-all duration-[320ms] hover:bg-accent/20">
+                            <SelectTrigger
+                                className="w-[60px] bg-card/40 border border-border rounded-lg justify-center backdrop-blur-md transition-all duration-[320ms] hover:bg-accent/20"
+                                aria-label="Select language"
+                            >
                                 <SelectValue>
                                     <ReactCountryFlag
                                         svg
@@ -108,25 +136,28 @@ const Navbar = () => {
                                         countryCode={
                                             languages.find((l) => l.code === currentLanguage)?.countryCode
                                         }
+                                        aria-label={languages.find((l) => l.code === currentLanguage)?.label}
                                     />
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent className="bg-card border border-border rounded-lg shadow-xl">
                                 {languages.map((lang) => (
-                                    <SelectItem key={lang.code} value={lang.code}>
+                                    <SelectItem key={lang.code} value={lang.code} aria-label={`Switch to ${lang.label}`}>
                                         <ReactCountryFlag
                                             svg
                                             style={{ width: "1.5em", height: "1.5em" }}
                                             countryCode={lang.countryCode}
+                                            aria-label={lang.label}
                                         />
+                                        <span className="ml-2">{lang.label}</span>
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
 
-                        <Link to="/donation">
+                        <Link to="/donation" aria-label="Go to donation page">
                             <Button className="btn-primary transition-all duration-[320ms] shadow-md hover:shadow-xl hover:scale-[1.03]">
-                                <Heart className="w-4 h-4 mr-2" />
+                                <Heart className="w-4 h-4 mr-2" aria-hidden="true" />
                                 {t("donateNow")}
                             </Button>
                         </Link>
@@ -137,8 +168,11 @@ const Navbar = () => {
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="text-foreground hover:text-primary p-2 transition-colors duration-[320ms]"
+                            aria-expanded={isOpen}
+                            aria-controls="mobile-menu"
+                            aria-label={isOpen ? "Close menu" : "Open menu"}
                         >
-                            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            {isOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
                         </button>
                     </div>
                 </div>
@@ -148,10 +182,13 @@ const Navbar = () => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
+                        id="mobile-menu"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         className="md:hidden bg-background/95 backdrop-blur-lg border-t border-border/40"
+                        role="menu"
+                        aria-label="Mobile navigation menu"
                     >
                         <div className="px-4 pt-3 pb-5 space-y-3">
                             {navigation.map((item) => {
@@ -165,6 +202,9 @@ const Navbar = () => {
                                             ? "text-primary bg-accent/10"
                                             : "text-foreground hover:text-primary hover:bg-accent/5"
                                             }`}
+                                        role="menuitem"
+                                        aria-current={isActive ? "page" : undefined}
+                                        aria-label={item.ariaLabel}
                                     >
                                         {item.icon}
                                         {item.name}
@@ -173,34 +213,56 @@ const Navbar = () => {
                             })}
 
                             <div className="space-y-3 pt-2">
-                                <Select value={currentLanguage} onValueChange={changeLanguage}>
-                                    <SelectTrigger className="w-full bg-card/50 border border-border rounded-lg justify-center backdrop-blur-md transition-colors duration-[320ms] hover:bg-accent/20">
-                                        <SelectValue>
-                                            <ReactCountryFlag
-                                                svg
-                                                style={{ width: "1.5em", height: "1.5em" }}
-                                                countryCode={
-                                                    languages.find((l) => l.code === currentLanguage)?.countryCode
-                                                }
-                                            />
-                                        </SelectValue>
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-card border border-border rounded-lg shadow-xl">
-                                        {languages.map((lang) => (
-                                            <SelectItem key={lang.code} value={lang.code}>
+                                <div className="flex items-center justify-between">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={toggleTheme}
+                                        className="w-9 h-9 p-0 bg-card/50 border border-border rounded-lg backdrop-blur-md transition-colors duration-[320ms] hover:bg-accent/20"
+                                        aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                                    >
+                                        {isDarkMode ? (
+                                            <Sun className="w-4 h-4" aria-hidden="true" />
+                                        ) : (
+                                            <Moon className="w-4 h-4" aria-hidden="true" />
+                                        )}
+                                    </Button>
+
+                                    <Select value={currentLanguage} onValueChange={changeLanguage}>
+                                        <SelectTrigger
+                                            className="w-[120px] bg-card/50 border border-border rounded-lg justify-center backdrop-blur-md transition-colors duration-[320ms] hover:bg-accent/20"
+                                            aria-label="Select language for mobile"
+                                        >
+                                            <SelectValue>
                                                 <ReactCountryFlag
                                                     svg
-                                                    style={{ width: "1.5em", height: "1.5em" }}
-                                                    countryCode={lang.countryCode}
+                                                    style={{ width: "1.2em", height: "1.2em" }}
+                                                    countryCode={
+                                                        languages.find((l) => l.code === currentLanguage)?.countryCode
+                                                    }
+                                                    aria-label={languages.find((l) => l.code === currentLanguage)?.label}
                                                 />
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                            </SelectValue>
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-card border border-border rounded-lg shadow-xl">
+                                            {languages.map((lang) => (
+                                                <SelectItem key={lang.code} value={lang.code} aria-label={`Switch to ${lang.label}`}>
+                                                    <ReactCountryFlag
+                                                        svg
+                                                        style={{ width: "1.2em", height: "1.2em" }}
+                                                        countryCode={lang.countryCode}
+                                                        aria-label={lang.label}
+                                                    />
+                                                    <span className="ml-2 text-sm">{lang.label}</span>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
 
-                                <Link to="/donation" onClick={() => setIsOpen(false)}>
+                                <Link to="/donation" onClick={() => setIsOpen(false)} aria-label="Go to donation page">
                                     <Button className="w-full btn-primary transition-all duration-[320ms] shadow-md hover:shadow-xl hover:scale-[1.03]">
-                                        <Heart className="w-4 h-4 mr-2" />
+                                        <Heart className="w-4 h-4 mr-2" aria-hidden="true" />
                                         {t("donateNow")}
                                     </Button>
                                 </Link>

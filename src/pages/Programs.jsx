@@ -229,7 +229,7 @@ const DonationForm = ({ onSubmit }) => {
 };
 
 // -------------------- Main Component --------------------
-const Programs = () => {
+const Programs = React.memo(() => {
     const { t } = useLanguage();
     const { toast } = useToast?.() || {};
 
@@ -314,15 +314,19 @@ const Programs = () => {
                 <meta name="description" content="Program Rumah Yatim Mizan: pendidikan, kesehatan, pemberdayaan, pembinaan, dan sosial." />
             </Helmet>
 
-            <main className="relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none">
+            <main className="relative overflow-hidden" role="main" aria-labelledby="programs-title">
+                <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                     <DecorativeBlob side="left" className="hidden lg:block" />
                     <DecorativeBlob side="right" className="hidden lg:block" />
                 </div>
 
-                <section className="relative py-12 px-4 md:py-16">
+                <section className="relative py-12 px-4 md:py-16" aria-labelledby="programs-title">
                     <div className="max-w-4xl mx-auto text-center">
-                        <motion.h1 {...motionCfg} className="text-3xl md:text-4xl lg:text-5xl font-heading animated-gradient bg-clip-text text-transparent leading-tight">
+                        <motion.h1
+                            id="programs-title"
+                            {...motionCfg}
+                            className="text-3xl md:text-4xl lg:text-5xl font-heading animated-gradient bg-clip-text text-transparent leading-tight"
+                        >
                             {sanitizeText(t('programs') || 'Program Kami')}
                         </motion.h1>
 
@@ -361,6 +365,8 @@ const Programs = () => {
             </main>
         </>
     );
-};
+});
+
+Programs.displayName = 'Programs';
 
 export default Programs;

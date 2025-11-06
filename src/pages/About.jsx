@@ -46,7 +46,7 @@ export const isSafeUrl = (url = '') => {
     }
 };
 
-const About = () => {
+const About = React.memo(() => {
     const { t } = useLanguage();
     const { toast } = useToast();
 
@@ -107,15 +107,15 @@ const About = () => {
             </Helmet>
 
             {/* HERO */}
-            <header className="relative overflow-hidden">
+            <header className="relative overflow-hidden" role="banner" aria-labelledby="about-hero-title">
                 {/* decorative blobs (token based) */}
                 <div
-                    aria-hidden
+                    aria-hidden="true"
                     className="absolute -top-24 -left-24 w-72 h-72 rounded-full blur-3xl opacity-40 pointer-events-none"
                     style={{ background: 'var(--gradient-accent)', transition: 'transform 320ms ease' }}
                 />
                 <div
-                    aria-hidden
+                    aria-hidden="true"
                     className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full blur-2xl opacity-30 pointer-events-none"
                     style={{ background: 'var(--gradient-primary)', transition: 'transform 320ms ease' }}
                 />
@@ -127,7 +127,10 @@ const About = () => {
                         transition={{ duration: 0.6 }}
                         className="text-center"
                     >
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading leading-tight tracking-tight glass-card inline-block p-4 px-6">
+                        <h1
+                            id="about-hero-title"
+                            className="text-3xl sm:text-4xl md:text-5xl font-heading leading-tight tracking-tight glass-card inline-block p-4 px-6"
+                        >
                             Tentang Rumah Yatim Mizan
                         </h1>
 
@@ -139,16 +142,32 @@ const About = () => {
                         <div className="mt-8 flex justify-center gap-3 flex-wrap">
                             <Button
                                 size="lg"
-                                className="btn-primary shadow-lg transition-all duration-[320ms] hover:scale-[1.02]"
-                                onClick={handleFeatureClick}
+                                className="btn-primary shadow-lg transition-all duration-[320ms] hover:scale-[1.02] focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                onClick={() => {
+                                    handleFeatureClick();
+                                    // Security: Rate limiting
+                                    const now = Date.now();
+                                    const lastClick = sessionStorage.getItem('aboutDonationClick');
+                                    if (lastClick && now - parseInt(lastClick) < 1500) return;
+                                    sessionStorage.setItem('aboutDonationClick', now.toString());
+                                }}
+                                aria-label="Make a donation"
                             >
                                 Berdonasi
                             </Button>
                             <Button
                                 size="lg"
                                 variant="outline"
-                                className="transition-all duration-[320ms] hover:bg-card/60"
-                                onClick={handleFeatureClick}
+                                className="transition-all duration-[320ms] hover:bg-card/60 focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                onClick={() => {
+                                    handleFeatureClick();
+                                    // Security: Rate limiting for volunteer button
+                                    const now = Date.now();
+                                    const lastClick = sessionStorage.getItem('aboutVolunteerClick');
+                                    if (lastClick && now - parseInt(lastClick) < 1500) return;
+                                    sessionStorage.setItem('aboutVolunteerClick', now.toString());
+                                }}
+                                aria-label="Become a volunteer"
                             >
                                 Jadilah Relawan
                             </Button>
@@ -332,10 +351,31 @@ const About = () => {
                         <p className="mt-2 text-sm text-text-subtle max-w-2xl mx-auto">Dukunganmu langsung berdampak pada masa depan anak-anak.</p>
 
                         <div className="mt-6 flex justify-center gap-3 flex-wrap">
-                            <Button className="btn-primary transition-all duration-[320ms]" onClick={handleFeatureClick}>
+                            <Button
+                                className="btn-primary transition-all duration-[320ms] focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                onClick={() => {
+                                    handleFeatureClick();
+                                    // Security: Rate limiting for CTA donation
+                                    const now = Date.now();
+                                    const lastClick = sessionStorage.getItem('aboutCtaDonationClick');
+                                    if (lastClick && now - parseInt(lastClick) < 2000) return;
+                                    sessionStorage.setItem('aboutCtaDonationClick', now.toString());
+                                }}
+                            >
                                 Donasi Sekarang
                             </Button>
-                            <Button variant="outline" className="transition-all duration-[320ms]" onClick={handleFeatureClick}>
+                            <Button
+                                variant="outline"
+                                className="transition-all duration-[320ms] focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                onClick={() => {
+                                    handleFeatureClick();
+                                    // Security: Rate limiting for learn more
+                                    const now = Date.now();
+                                    const lastClick = sessionStorage.getItem('aboutCtaLearnClick');
+                                    if (lastClick && now - parseInt(lastClick) < 1500) return;
+                                    sessionStorage.setItem('aboutCtaLearnClick', now.toString());
+                                }}
+                            >
                                 Pelajari Cara Berdonasi
                             </Button>
                         </div>
@@ -348,6 +388,8 @@ const About = () => {
             </main>
         </>
     );
-};
+});
+
+About.displayName = 'About';
 
 export default About;

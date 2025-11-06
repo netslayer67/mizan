@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
@@ -10,16 +10,43 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 
-const Contact = () => {
+const Contact = React.memo(() => {
     const { t } = useLanguage();
     const { toast } = useToast();
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        const cleanValue = value.replace(/<[^>]*>|(https?:\/\/[^\s]+)/gi, ''); // block script & URLs
+        // Enhanced sanitization to prevent XSS, script injection, and malicious URLs
+        const cleanValue = value
+            .replace(/<[^>]*>/g, '') // Remove HTML tags
+            .replace(/javascript:|data:|vbscript:|on\w+=/gi, '') // Remove dangerous protocols
+            .replace(/(https?:\/\/[^\s]+)/gi, '') // Remove URLs
+            .replace(/[^\w\s@.-]/g, '') // Allow only safe characters
+            .trim();
         setFormData(prev => ({ ...prev, [name]: cleanValue }));
     };
+
+    const contactInfo = useMemo(() => [
+        {
+            icon: MapPin,
+            title: 'Alamat Kantor Pusat',
+            value: 'Jl. Raya Bogor KM 24, Cijantung, Jakarta Timur 13770',
+            ariaLabel: 'Office address: Jl. Raya Bogor KM 24, Cijantung, Jakarta Timur 13770'
+        },
+        {
+            icon: Phone,
+            title: 'Telepon & WhatsApp',
+            value: '+62 21 8400 8080',
+            ariaLabel: 'Phone and WhatsApp: +62 21 8400 8080'
+        },
+        {
+            icon: Mail,
+            title: 'Email',
+            value: 'info@rumahyatimmizan.org',
+            ariaLabel: 'Email: info@rumahyatimmizan.org'
+        }
+    ], []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,23 +65,6 @@ const Contact = () => {
         });
     };
 
-    const contactInfo = [
-        {
-            icon: MapPin,
-            title: 'Alamat Kantor Pusat',
-            value: 'Jl. Raya Bogor KM 24, Cijantung, Jakarta Timur 13770'
-        },
-        {
-            icon: Phone,
-            title: 'Telepon & WhatsApp',
-            value: '+62 21 8400 8080'
-        },
-        {
-            icon: Mail,
-            title: 'Email',
-            value: 'info@rumahyatimmizan.org'
-        }
-    ];
 
     return (
         <>
@@ -171,6 +181,8 @@ const Contact = () => {
             </section>
         </>
     );
-};
+});
+
+Contact.displayName = 'Contact';
 
 export default Contact;

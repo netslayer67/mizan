@@ -17,25 +17,25 @@ const Footer = () => {
     const { t } = useLanguage();
 
     const quickLinks = [
-        { name: t("about"), href: "/about" },
-        { name: t("programs"), href: "/programs" },
-        { name: t("asrama"), href: "/asrama" },
-        { name: t("publications"), href: "/publications" },
-        { name: t("news"), href: "/news" },
-        { name: t("contact"), href: "/contact" },
+        { name: t("about"), href: "/about", ariaLabel: "Go to about page" },
+        { name: t("programs"), href: "/programs", ariaLabel: "Go to programs page" },
+        { name: t("asrama"), href: "/asrama", ariaLabel: "Go to asrama page" },
+        { name: t("publications"), href: "/publications", ariaLabel: "Go to publications page" },
+        { name: t("news"), href: "/news", ariaLabel: "Go to news page" },
+        { name: t("contact"), href: "/contact", ariaLabel: "Go to contact page" },
     ];
 
     const socialLinks = [
-        { icon: Facebook, href: "#", label: "Facebook" },
-        { icon: Instagram, href: "#", label: "Instagram" },
-        { icon: Twitter, href: "#", label: "Twitter" },
-        { icon: Youtube, href: "#", label: "YouTube" },
+        { icon: Facebook, href: "#", label: "Facebook", ariaLabel: "Visit our Facebook page" },
+        { icon: Instagram, href: "#", label: "Instagram", ariaLabel: "Visit our Instagram page" },
+        { icon: Twitter, href: "#", label: "Twitter", ariaLabel: "Visit our Twitter page" },
+        { icon: Youtube, href: "#", label: "YouTube", ariaLabel: "Visit our YouTube channel" },
     ];
 
     return (
-        <footer className="relative overflow-hidden">
+        <footer className="relative overflow-hidden" role="contentinfo" aria-label="Site footer">
             {/* Decorative blobs */}
-            <div className="absolute inset-0 -z-10">
+            <div className="absolute inset-0 -z-10" aria-hidden="true">
                 <div className="absolute -top-12 -left-12 w-64 h-64 rounded-full bg-accent/20 blur-3xl animate-pulse" />
                 <div className="absolute -bottom-16 -right-16 w-80 h-80 rounded-full bg-primary/15 blur-3xl animate-[ping_18s_linear_infinite]" />
             </div>
@@ -46,7 +46,7 @@ const Footer = () => {
                     <div className="space-y-4">
                         <img
                             src={logo}
-                            alt="Rumah Yatim Mizan"
+                            alt="Rumah Yatim Mizan logo"
                             className="h-12 w-auto object-contain"
                         />
                         <p className="text-sm leading-relaxed text-muted-foreground max-w-sm">
@@ -60,18 +60,21 @@ const Footer = () => {
                         <h3 className="text-lg font-semibold mb-4 text-foreground">
                             {t("quickLinks")}
                         </h3>
-                        <ul className="space-y-2">
-                            {quickLinks.map((link) => (
-                                <li key={link.name}>
-                                    <Link
-                                        to={link.href}
-                                        className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300"
-                                    >
-                                        {link.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                        <nav aria-label="Footer quick links">
+                            <ul className="space-y-2">
+                                {quickLinks.map((link) => (
+                                    <li key={link.name}>
+                                        <Link
+                                            to={link.href}
+                                            className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+                                            aria-label={link.ariaLabel}
+                                        >
+                                            {link.name}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
                     </div>
 
                     {/* Contact Info */}
@@ -104,15 +107,18 @@ const Footer = () => {
                         <h3 className="text-lg font-semibold mb-4 text-foreground">
                             {t("followUs")}
                         </h3>
-                        <div className="flex space-x-4">
+                        <div className="flex space-x-4" role="list" aria-label="Social media links">
                             {socialLinks.map((social) => (
                                 <a
                                     key={social.label}
                                     href={social.href}
-                                    className="w-10 h-10 rounded-xl bg-card/60 border border-border flex items-center justify-center text-foreground hover:text-primary hover:bg-accent/20 transition-all duration-300 shadow-sm"
-                                    aria-label={social.label}
+                                    className="w-10 h-10 rounded-xl bg-card/60 border border-border flex items-center justify-center text-foreground hover:text-primary hover:bg-accent/20 transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                                    aria-label={social.ariaLabel}
+                                    role="listitem"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                 >
-                                    <social.icon className="w-5 h-5" />
+                                    <social.icon className="w-5 h-5" aria-hidden="true" />
                                 </a>
                             ))}
                         </div>

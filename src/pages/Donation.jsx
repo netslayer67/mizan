@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { Heart, CreditCard, Lock, CheckCircle, ArrowRight } from 'lucide-react';
@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/components/ui/use-toast';
 
-const Donation = () => {
+const Donation = React.memo(() => {
     const { t } = useLanguage();
     const { toast } = useToast();
     const [amount, setAmount] = useState(100000);
@@ -19,7 +19,7 @@ const Donation = () => {
     const [donationType, setDonationType] = useState('preset');
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
 
-    const presetAmounts = [50000, 100000, 250000, 500000, 1000000];
+    const presetAmounts = useMemo(() => [50000, 100000, 250000, 500000, 1000000], []);
 
     const handleFeatureClick = () => {
         toast({
@@ -43,7 +43,9 @@ const Donation = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        // Sanitize input to prevent XSS and malicious content
+        const sanitizedValue = value.replace(/<[^>]*>/g, '').replace(/javascript:|data:|vbscript:|on\w+=/gi, '').trim();
+        setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
     };
 
     const handleSubmit = (e) => {
@@ -67,13 +69,13 @@ const Donation = () => {
         handleFeatureClick();
     };
 
-    const impactData = [
+    const impactData = useMemo(() => [
         { amount: 50000, text: "Bantuan perlengkapan sekolah untuk 1 anak" },
         { amount: 100000, text: "Bantuan gizi seimbang selama 1 minggu untuk 1 anak" },
         { amount: 250000, text: "Biaya kesehatan rutin untuk 1 anak selama 1 bulan" },
         { amount: 500000, text: "Bantuan biaya pendidikan selama 1 bulan untuk 1 anak" },
         { amount: 1000000, text: "Beasiswa penuh untuk 1 anak selama 1 semester di sekolah favorit" },
-    ];
+    ], []);
 
     const getImpactText = () => {
         let impact = impactData[0].text;
@@ -255,6 +257,8 @@ const Donation = () => {
             </section>
         </>
     );
-};
+});
+
+Donation.displayName = 'Donation';
 
 export default Donation;

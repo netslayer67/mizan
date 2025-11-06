@@ -19,7 +19,10 @@ function App() {
     return (
         <LanguageProvider>
             <Router>
-                <div className="min-h-screen bg-broken-white">
+                <div className="min-h-screen bg-background">
+                    {/* Skip link for accessibility */}
+                    <a href="#main-content" className="skip-link">Skip to main content</a>
+
                     <Helmet>
                         <title>Rumah Yatim Mizan - Membangun Masa Depan Anak Yatim</title>
                         <meta name="description" content="Rumah Yatim Mizan adalah lembaga sosial yang berkomitmen membangun masa depan cerah anak-anak yatim melalui program pendidikan, kesehatan, ekonomi, dan dakwah." />
@@ -29,11 +32,14 @@ function App() {
                         <meta property="og:type" content="website" />
                         <link rel="preconnect" href="https://fonts.googleapis.com" />
                         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+                        {/* Accessibility meta */}
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                        <meta name="theme-color" content="hsl(var(--primary))" />
                     </Helmet>
 
                     <Navbar />
 
-                    <main className="min-h-screen">
+                    <main id="main-content" className="min-h-screen" role="main" aria-label="Main content">
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/about" element={<About />} />

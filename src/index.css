@@ -6,11 +6,12 @@
 
 @layer base {
     :root {
-        /* 🌞 Neutral / Background */
+        /* 🌞 Light Mode */
         --background: 210 40% 98%;
         /* very light blueish-white (cerah tapi nggak #fff) */
         --foreground: 220 30% 15%;
         /* navy tua, readable */
+
         --card: 0 0% 100%;
         /* putih bersih untuk card */
         --card-foreground: 220 30% 15%;
@@ -64,6 +65,56 @@
         --text-secondary: 220 20% 35%;
     }
 
+    .dark {
+        /* 🌙 Dark Mode */
+        --background: 220 30% 8%;
+        /* very dark navy */
+        --foreground: 210 40% 95%;
+        /* light text */
+
+        --card: 220 25% 12%;
+        /* dark card */
+        --card-foreground: 210 40% 95%;
+        /* light text */
+
+        --popover: 220 25% 12%;
+        --popover-foreground: 210 40% 95%;
+        --border: 220 15% 25%;
+        /* darker border */
+        --input: 220 15% 25%;
+        --ring: 199 95% 48%;
+        /* keep bright for focus */
+
+        /* 🎨 Brand Core - slightly adjusted for dark */
+        --primary: 199 95% 55%;
+        /* slightly brighter blue */
+        --primary-foreground: 220 30% 8%;
+        --secondary: 231 44% 35%;
+        /* lighter navy */
+        --secondary-foreground: 210 40% 95%;
+        --accent: 200 100% 70%;
+        /* brighter accent */
+        --accent-foreground: 220 30% 8%;
+
+        /* 🛡️ Functional - adjusted for dark */
+        --success: 152 55% 50%;
+        --success-foreground: 220 30% 8%;
+        --warning: 38 92% 60%;
+        --warning-foreground: 220 30% 8%;
+        --error: 355 75% 55%;
+        --error-foreground: 220 30% 8%;
+        --info: 200 85% 65%;
+        --info-foreground: 220 30% 8%;
+
+        /* ✨ Extras */
+        --muted: 220 15% 15%;
+        --muted-foreground: 220 10% 65%;
+        --overlay: 220 30% 8% / 0.8;
+
+        /* Gradients - adjusted for dark */
+        --gradient-primary: linear-gradient(135deg, hsl(199 95% 55%), hsl(231 44% 35%));
+        --gradient-accent: linear-gradient(135deg, hsl(200 100% 70%), transparent);
+    }
 }
 
 /* hero text readability tweak */
@@ -116,6 +167,50 @@
     html {
         scroll-behavior: smooth;
         translate: no;
+    }
+
+    /* Accessibility improvements */
+    :focus-visible {
+        outline: 2px solid hsl(var(--ring));
+        outline-offset: 2px;
+    }
+
+    /* Skip link for screen readers */
+    .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        padding: 8px;
+        text-decoration: none;
+        border-radius: 4px;
+        z-index: 1000;
+    }
+
+    .skip-link:focus {
+        top: 6px;
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+        .glass-card {
+            background: hsl(var(--background)) !important;
+            backdrop-filter: none !important;
+            border: 2px solid hsl(var(--border)) !important;
+        }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 }
 

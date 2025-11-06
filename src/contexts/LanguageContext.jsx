@@ -10,6 +10,24 @@ export const useLanguage = () => {
     return context;
 };
 
+// Sanitize input to prevent XSS and other attacks
+const sanitizeInput = (value) => {
+    if (typeof value !== 'string') return '';
+    // Remove HTML tags and dangerous patterns
+    return value.replace(/<[^>]*>/g, '').replace(/javascript:|data:|vbscript:|on\w+=/gi, '').trim();
+};
+
+// Dark mode context
+const ThemeContext = createContext();
+
+export const useTheme = () => {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useTheme must be used within a ThemeProvider');
+    }
+    return context;
+};
+
 const translations = {
     id: {
         // Navigation
@@ -212,11 +230,21 @@ const translations = {
 
 export const LanguageProvider = ({ children }) => {
     const [currentLanguage, setCurrentLanguage] = useState('id');
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
         const savedLanguage = localStorage.getItem('language');
         if (savedLanguage && translations[savedLanguage]) {
             setCurrentLanguage(savedLanguage);
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+        setIsDarkMode(shouldBeDark);
+
+        if (shouldBeDark) {
+            document.documentElement.classList.add('dark');
         }
     }, []);
 
@@ -227,22 +255,47 @@ export const LanguageProvider = ({ children }) => {
         }
     };
 
+    const toggleTheme = () => {
+        const newTheme = !isDarkMode;
+        setIsDarkMode(newTheme);
+        localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+
+        if (newTheme) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    };
+
     const t = (key) => {
         return translations[currentLanguage][key] || key;
     };
 
-    const value = {
+    const languageValue = {
         currentLanguage,
         changeLanguage,
         t,
         isRTL: currentLanguage === 'ar'
     };
 
+    const themeValue = {
+        isDarkMode,
+        toggleTheme
+    };
+
     return (
-        <LanguageContext.Provider value={value}>
-            <div className={currentLanguage === 'ar' ? 'font-arabic' : ''} dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}>
-                {children}
-            </div>
+        <LanguageContext.Provider value={languageValue}>
+            <ThemeContext.Provider value={themeValue}>
+                <div
+                    className={currentLanguage === 'ar' ? 'font-arabic' : ''}
+                    dir={currentLanguage === 'ar' ? 'rtl' : 'ltr'}
+                    lang={currentLanguage}
+                    role="application"
+                    aria-label={`Language: ${currentLanguage === 'id' ? 'Indonesian' : currentLanguage === 'en' ? 'English' : 'Arabic'}`}
+                >
+                    {children}
+                </div>
+            </ThemeContext.Provider>
         </LanguageContext.Provider>
     );
 };
